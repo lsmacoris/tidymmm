@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.55">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lucas S. Macoris">
+
+<title>Tidy MMM</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="report_files/libs/quarto-html/quarto.js"></script>
+<script src="report_files/libs/quarto-html/popper.min.js"></script>
+<script src="report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="report_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="report_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="report_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="report_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="report_files/libs/jquery-3.5.1/jquery.min.js"></script>
+
+<script src="report_files/libs/proj4js-2.3.15/proj4.js"></script>
+
+<link href="report_files/libs/highcharts-9.3.1/css/motion.css" rel="stylesheet">
+
+<script src="report_files/libs/highcharts-9.3.1/highcharts.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/highcharts-3d.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/highcharts-more.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/stock.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/map.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/data.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/exporting.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/offline-exporting.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/drilldown.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/item-series.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/overlapping-datalabels.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/annotations.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/export-data.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/funnel.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/heatmap.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/treemap.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/sankey.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/dependency-wheel.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/organization.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/solid-gauge.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/streamgraph.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/sunburst.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/vector.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/wordcloud.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/xrange.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/tilemap.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/venn.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/gantt.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/timeline.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/parallel-coordinates.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/bullet.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/coloraxis.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/dumbbell.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/lollipop.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/series-label.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/plugins/motion.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/custom/reset.js"></script>
+
+<script src="report_files/libs/highcharts-9.3.1/modules/boost.js"></script>
+
+<script src="report_files/libs/highchart-binding-0.9.4/highchart.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-full">
+
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Tidy MMM</h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-page">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lucas S. Macoris </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="loading-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="loading-libraries">Loading Libraries</h2>
+<p>In this section, we will be loading all the <code>R</code> packages required to build and run the <code>tidy-mmm</code> workflow. The project is built mainly using the <code>tidyverse</code>, a collection of R packages designed for data science, which provides a consistent and expressive framework for data manipulation, visualization, and modeling. Additional libraries such as <code>lubridate</code> are used for handling dates, and other optional packages may be included to support regression modeling and visualization formatting, like <code>broom</code> and <code>tidymodels</code>. This step ensures the environment is fully prepared before any data is generated or analyzed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xts)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(highcharter)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="generating-sales-data" class="level2">
+<h2 class="anchored" data-anchor-id="generating-sales-data">Generating Sales Data</h2>
+<p>In this section, we create a synthetic dataset that simulates weekly sales at the state level for all 50 U.S. states across 104 weeks (roughly 2 years worth of data). The generated sales data is anchored in a common underlying national trend, which reflects a baseline seasonal or growth pattern, a regional shock, and a state shock to reflect realistic geographic disparities in sales performance. The result is a tidy dataset containing state, week, and sales columns, which forms the dependent variable for our media mix modeling.</p>
+<p>To simulate dynamic sales behavior, the model incorporates the three levels of variation using an <span class="math inline">\(ARIMA(p,d,q)\)</span> processe: a <code>national_shock</code> that affects all states, a <code>regional_shock</code> that varies by region, and idiosyncratic <code>state_shock</code> that are unique to each state. The national shock is modeled using a non-stationary <span class="math inline">\(ARIMA(0.9,1,0.2)\)</span> process to capture long-term trends and broader economic conditions. Regional and state-specific shocks follow stationary ARIMA models to introduce localized fluctuations.</p>
+<p>These shocks are combined using a weighted approach, where the national component has the highest influence, followed by the regional and state-level contributions. The weights are set to reflect the relative importance of each level: <span class="math inline">\(5\)</span> for national, <span class="math inline">\(3\)</span> for regional, and <span class="math inline">\(1\)</span> for state-specific shocks.</p>
+<p>Crucially, the resulting signal is scaled and centered around a realistic sales baseline. A fixed baseline of <span class="math inline">\(1MM\)</span> units is used to represent typical sales volume, and a scaling factor of <span class="math inline">\(10,000\)</span> adjusts the amplitude of the combined shock components. The final synthetic sales value for each week and state is computed by adding the weighted, scaled sum of shocks to this baseline, ensuring that the series resembles plausible real-world sales trajectories while maintaining structured variation across states and over time.</p>
+<p>The final result is a structured list containing <span class="math inline">\(50\)</span> time series data frames—one for each state—with columns for national, regional, and state shocks, as well as the computed synthetic sales values. This setup is ideal for testing econometric models, running marketing experiments, or demonstrating media mix modeling pipelines.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Set seed for reproducibility</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Set a Sales scaling factor</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>baseline <span class="ot">=</span> <span class="dv">1000000</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>scaling <span class="ot">=</span> <span class="dv">10000</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Create a panel dataframe that assigns 50 states to 5 regions</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>states <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">'S{1:50}'</span>)<span class="sc">%&gt;%</span><span class="fu">as.vector</span>()</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>regions <span class="ot">=</span> <span class="fu">glue</span>(<span class="st">'R{1:5}'</span>)<span class="sc">%&gt;%</span><span class="fu">as.vector</span>()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>panel<span class="ot">=</span><span class="fu">data.frame</span>(<span class="st">'region'</span><span class="ot">=</span> <span class="fu">sample</span>(regions,<span class="dv">50</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'state'</span><span class="ot">=</span> states)<span class="sc">%&gt;%</span><span class="fu">arrange</span>(region)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Create a Week Ending Sunday series</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>start_date <span class="ot">=</span> <span class="fu">as.Date</span>(<span class="st">'2023-01-01'</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>end_date <span class="ot">=</span> <span class="fu">as.Date</span>(<span class="st">'2024-12-28'</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>weeks <span class="ot">=</span> <span class="fu">seq.Date</span>(start_date,end_date,<span class="st">'1 week'</span>)<span class="sc">%&gt;%</span><span class="fu">ceiling_date</span>(<span class="at">unit=</span><span class="st">'weeks'</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#Create a National baseline series that spans all states based on an ARIMA(p,d,q) model</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>national_shock <span class="ot">=</span> <span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.9</span>,<span class="at">ma=</span><span class="fl">0.2</span>,<span class="at">i=</span><span class="dv">1</span>),<span class="at">n=</span><span class="fu">length</span>(weeks))</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Create region-wise shocks that affect only states within a given state</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>regional_shock <span class="ot">=</span> <span class="fu">replicate</span>(<span class="fu">length</span>(regions),<span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.5</span>,<span class="at">ma=</span><span class="fl">0.5</span>,<span class="at">i=</span><span class="dv">0</span>),<span class="at">n=</span><span class="fu">length</span>(weeks)))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(regional_shock) <span class="ot">=</span> regions</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#Create state-specific shocks to allow for within-state variation</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>state_shock <span class="ot">=</span> <span class="fu">replicate</span>(<span class="fu">length</span>(states),<span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.7</span>,<span class="at">ma=</span><span class="fl">0.25</span>,<span class="at">i=</span><span class="dv">0</span>),<span class="at">n=</span><span class="fu">length</span>(weeks)))</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(state_shock) <span class="ot">=</span> states</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#Apply weightings to national, region, and state dependency (weights are relative)</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>n_share <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>r_share <span class="ot">=</span> <span class="dv">3</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>s_share <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#Initialize a state-level list and build the national, regional, and state-level variations</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>panel_data<span class="ot">=</span><span class="fu">vector</span>(<span class="st">"list"</span>,<span class="dv">50</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(states)<span class="sc">%&gt;%</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">imap</span>(<span class="cf">function</span>(.x, state_name) {</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Get the state name</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    region_name <span class="ot">=</span> panel <span class="sc">%&gt;%</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(state <span class="sc">==</span> state_name) <span class="sc">%&gt;%</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pull</span>(region)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>      <span class="fu">data.frame</span>(</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">national_shock=</span><span class="fu">as.numeric</span>(national_shock),</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="at">regional_shock=</span><span class="fu">pull</span>(<span class="fu">as.data.frame</span>(regional_shock)<span class="sc">%&gt;%</span><span class="fu">select</span>(region_name)),</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">state_shock=</span> <span class="fu">pull</span>(<span class="fu">as.data.frame</span>(state_shock)<span class="sc">%&gt;%</span><span class="fu">select</span>(state_name))</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">%&gt;%</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">sales =</span> baseline <span class="sc">+</span> scaling <span class="sc">*</span> (national_shock <span class="sc">*</span> n_share <span class="sc">+</span> regional_shock <span class="sc">*</span> r_share <span class="sc">+</span> state_shock <span class="sc">*</span> s_share))</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>regional_sales <span class="ot">=</span> (</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(<span class="st">'cbind'</span>,panel_data <span class="sc">%&gt;%</span><span class="fu">map</span>(\(x) x<span class="sc">%&gt;%</span><span class="fu">select</span>(sales)))<span class="sc">%&gt;%</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setNames</span>(states)<span class="sc">%&gt;%</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">week=</span>weeks)<span class="sc">%&gt;%</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">names_to =</span> <span class="st">'state'</span>,<span class="at">values_to =</span> <span class="st">'sales'</span>,<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">'S'</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(panel)<span class="sc">%&gt;%</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(region,week)<span class="sc">%&gt;%</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric),sum,<span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="co">#Chart Options</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>hcoptslang <span class="ot">&lt;-</span> <span class="fu">getOption</span>(<span class="st">"highcharter.lang"</span>)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>hcoptslang<span class="sc">$</span>thousandsSep <span class="ot">&lt;-</span> <span class="st">","</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">highcharter.lang =</span> hcoptslang)</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>regional_sales<span class="sc">%&gt;%</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hchart</span>(<span class="st">"line"</span>,<span class="fu">hcaes</span>(<span class="at">x =</span> week, <span class="at">y =</span> sales, <span class="at">group =</span> region))<span class="sc">%&gt;%</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hc_title</span>(<span class="at">text =</span> <span class="st">"Sales over time by Region"</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hc_xAxis</span>(<span class="at">title=</span><span class="fu">list</span>(<span class="at">text=</span><span class="st">'Week-Ending-Sunday'</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hc_yAxis</span>(<span class="at">title=</span><span class="fu">list</span>(<span class="at">text=</span><span class="st">'Unit Sales'</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hc_tooltip</span>(</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">valueDecimals =</span> <span class="dv">0</span>,</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">valuePrefix =</span> <span class="st">"$"</span>,</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">pointFormat =</span> <span class="st">"&lt;b&gt;{series.name}&lt;/b&gt;: ${point.y:,.0f}&lt;br/&gt;"</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="highchart html-widget html-fill-item" id="htmlwidget-473e2f6d24b4225167a8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-473e2f6d24b4225167a8">{"x":{"hc_opts":{"chart":{"reflow":true},"title":{"text":"Sales over time by Region"},"yAxis":{"title":{"text":"Unit Sales"},"type":"linear"},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0,"showInLegend":true},"treemap":{"layoutAlgorithm":"squarified"},"scatter":{"marker":{"symbol":"circle"}}},"series":[{"name":"R1","data":[{"region":"R1","week":"2023-01-08","sales":13941010.35538678,"x":1673136000000,"y":13941010.35538678},{"region":"R1","week":"2023-01-15","sales":14983952.89458574,"x":1673740800000,"y":14983952.89458574},{"region":"R1","week":"2023-01-22","sales":16251748.09757983,"x":1674345600000,"y":16251748.09757983},{"region":"R1","week":"2023-01-29","sales":15689074.13499502,"x":1674950400000,"y":15689074.13499502},{"region":"R1","week":"2023-02-05","sales":14141004.1572176,"x":1675555200000,"y":14141004.1572176},{"region":"R1","week":"2023-02-12","sales":13940074.58654978,"x":1676160000000,"y":13940074.58654978},{"region":"R1","week":"2023-02-19","sales":13919359.70717195,"x":1676764800000,"y":13919359.70717195},{"region":"R1","week":"2023-02-26","sales":13202227.56466185,"x":1677369600000,"y":13202227.56466185},{"region":"R1","week":"2023-03-05","sales":12346744.86623987,"x":1677974400000,"y":12346744.86623987},{"region":"R1","week":"2023-03-12","sales":11244558.62236844,"x":1678579200000,"y":11244558.62236844},{"region":"R1","week":"2023-03-19","sales":11116213.00175913,"x":1679184000000,"y":11116213.00175913},{"region":"R1","week":"2023-03-26","sales":11176858.23094491,"x":1679788800000,"y":11176858.23094491},{"region":"R1","week":"2023-04-02","sales":10848354.34571752,"x":1680393600000,"y":10848354.34571752},{"region":"R1","week":"2023-04-09","sales":10880855.76207165,"x":1680998400000,"y":10880855.76207165},{"region":"R1","week":"2023-04-16","sales":11253698.97947292,"x":1681603200000,"y":11253698.97947292},{"region":"R1","week":"2023-04-23","sales":10925200.82206251,"x":1682208000000,"y":10925200.82206251},{"region":"R1","week":"2023-04-30","sales":11032287.97889726,"x":1682812800000,"y":11032287.97889726},{"region":"R1","week":"2023-05-07","sales":9913028.222177191,"x":1683417600000,"y":9913028.222177191},{"region":"R1","week":"2023-05-14","sales":10217064.3298907,"x":1684022400000,"y":10217064.3298907},{"region":"R1","week":"2023-05-21","sales":10494949.1566335,"x":1684627200000,"y":10494949.1566335},{"region":"R1","week":"2023-05-28","sales":11481681.64468242,"x":1685232000000,"y":11481681.64468242},{"region":"R1","week":"2023-06-04","sales":11835050.33003531,"x":1685836800000,"y":11835050.33003531},{"region":"R1","week":"2023-06-11","sales":11335392.2682942,"x":1686441600000,"y":11335392.2682942},{"region":"R1","week":"2023-06-18","sales":10460618.55231373,"x":1687046400000,"y":10460618.55231373},{"region":"R1","week":"2023-06-25","sales":9589484.363172816,"x":1687651200000,"y":9589484.363172816},{"region":"R1","week":"2023-07-02","sales":9393930.255818164,"x":1688256000000,"y":9393930.255818164},{"region":"R1","week":"2023-07-09","sales":9120636.62157484,"x":1688860800000,"y":9120636.62157484},{"region":"R1","week":"2023-07-16","sales":9407777.388413066,"x":1689465600000,"y":9407777.388413066},{"region":"R1","week":"2023-07-23","sales":9708228.75008468,"x":1690070400000,"y":9708228.75008468},{"region":"R1","week":"2023-07-30","sales":10774907.37686721,"x":1690675200000,"y":10774907.37686721},{"region":"R1","week":"2023-08-06","sales":10361332.03968772,"x":1691280000000,"y":10361332.03968772},{"region":"R1","week":"2023-08-13","sales":10465726.0398136,"x":1691884800000,"y":10465726.0398136},{"region":"R1","week":"2023-08-20","sales":11370624.87131401,"x":1692489600000,"y":11370624.87131401},{"region":"R1","week":"2023-08-27","sales":10628762.42806135,"x":1693094400000,"y":10628762.42806135},{"region":"R1","week":"2023-09-03","sales":10332898.57442382,"x":1693699200000,"y":10332898.57442382},{"region":"R1","week":"2023-09-10","sales":12083201.22356742,"x":1694304000000,"y":12083201.22356742},{"region":"R1","week":"2023-09-17","sales":12560748.31328845,"x":1694908800000,"y":12560748.31328845},{"region":"R1","week":"2023-09-24","sales":11858073.9220723,"x":1695513600000,"y":11858073.9220723},{"region":"R1","week":"2023-10-01","sales":11269218.01392963,"x":1696118400000,"y":11269218.01392963},{"region":"R1","week":"2023-10-08","sales":10416771.28283766,"x":1696723200000,"y":10416771.28283766},{"region":"R1","week":"2023-10-15","sales":11043026.26212913,"x":1697328000000,"y":11043026.26212913},{"region":"R1","week":"2023-10-22","sales":10175243.53408087,"x":1697932800000,"y":10175243.53408087},{"region":"R1","week":"2023-10-29","sales":10584118.38583654,"x":1698537600000,"y":10584118.38583654},{"region":"R1","week":"2023-11-05","sales":12138224.35252528,"x":1699142400000,"y":12138224.35252528},{"region":"R1","week":"2023-11-12","sales":12136732.24941378,"x":1699747200000,"y":12136732.24941378},{"region":"R1","week":"2023-11-19","sales":12358385.68193674,"x":1700352000000,"y":12358385.68193674},{"region":"R1","week":"2023-11-26","sales":12415604.62825396,"x":1700956800000,"y":12415604.62825396},{"region":"R1","week":"2023-12-03","sales":11557632.73111516,"x":1701561600000,"y":11557632.73111516},{"region":"R1","week":"2023-12-10","sales":10258509.31190907,"x":1702166400000,"y":10258509.31190907},{"region":"R1","week":"2023-12-17","sales":8562703.957243977,"x":1702771200000,"y":8562703.957243977},{"region":"R1","week":"2023-12-24","sales":8072458.424420052,"x":1703376000000,"y":8072458.424420052},{"region":"R1","week":"2023-12-31","sales":7538755.754107257,"x":1703980800000,"y":7538755.754107257},{"region":"R1","week":"2024-01-07","sales":8406988.762837728,"x":1704585600000,"y":8406988.762837728},{"region":"R1","week":"2024-01-14","sales":10782209.83091486,"x":1705190400000,"y":10782209.83091486},{"region":"R1","week":"2024-01-21","sales":11345536.27528955,"x":1705795200000,"y":11345536.27528955},{"region":"R1","week":"2024-01-28","sales":12223348.8821923,"x":1706400000000,"y":12223348.8821923},{"region":"R1","week":"2024-02-04","sales":12300655.3403709,"x":1707004800000,"y":12300655.3403709},{"region":"R1","week":"2024-02-11","sales":11554828.02787768,"x":1707609600000,"y":11554828.02787768},{"region":"R1","week":"2024-02-18","sales":10592552.54762177,"x":1708214400000,"y":10592552.54762177},{"region":"R1","week":"2024-02-25","sales":10730980.0170898,"x":1708819200000,"y":10730980.0170898},{"region":"R1","week":"2024-03-03","sales":11122773.99899391,"x":1709424000000,"y":11122773.99899391},{"region":"R1","week":"2024-03-10","sales":11895032.73636125,"x":1710028800000,"y":11895032.73636125},{"region":"R1","week":"2024-03-17","sales":11943939.66004675,"x":1710633600000,"y":11943939.66004675},{"region":"R1","week":"2024-03-24","sales":11846635.57710645,"x":1711238400000,"y":11846635.57710645},{"region":"R1","week":"2024-03-31","sales":11810798.76382157,"x":1711843200000,"y":11810798.76382157},{"region":"R1","week":"2024-04-07","sales":12428989.74804499,"x":1712448000000,"y":12428989.74804499},{"region":"R1","week":"2024-04-14","sales":11834482.19714783,"x":1713052800000,"y":11834482.19714783},{"region":"R1","week":"2024-04-21","sales":11052955.33683605,"x":1713657600000,"y":11052955.33683605},{"region":"R1","week":"2024-04-28","sales":13123398.17476077,"x":1714262400000,"y":13123398.17476077},{"region":"R1","week":"2024-05-05","sales":13125983.16333023,"x":1714867200000,"y":13125983.16333023},{"region":"R1","week":"2024-05-12","sales":12440558.46703686,"x":1715472000000,"y":12440558.46703686},{"region":"R1","week":"2024-05-19","sales":12952866.05884368,"x":1716076800000,"y":12952866.05884368},{"region":"R1","week":"2024-05-26","sales":12947633.61700334,"x":1716681600000,"y":12947633.61700334},{"region":"R1","week":"2024-06-02","sales":12959860.27274105,"x":1717286400000,"y":12959860.27274105},{"region":"R1","week":"2024-06-09","sales":13128177.09421098,"x":1717891200000,"y":13128177.09421098},{"region":"R1","week":"2024-06-16","sales":13082434.48859903,"x":1718496000000,"y":13082434.48859903},{"region":"R1","week":"2024-06-23","sales":13128456.93733367,"x":1719100800000,"y":13128456.93733367},{"region":"R1","week":"2024-06-30","sales":13566452.1235788,"x":1719705600000,"y":13566452.1235788},{"region":"R1","week":"2024-07-07","sales":14649757.63096148,"x":1720310400000,"y":14649757.63096148},{"region":"R1","week":"2024-07-14","sales":13979660.49944135,"x":1720915200000,"y":13979660.49944135},{"region":"R1","week":"2024-07-21","sales":13322229.37456341,"x":1721520000000,"y":13322229.37456341},{"region":"R1","week":"2024-07-28","sales":13419411.90778776,"x":1722124800000,"y":13419411.90778776},{"region":"R1","week":"2024-08-04","sales":13688935.83038454,"x":1722729600000,"y":13688935.83038454},{"region":"R1","week":"2024-08-11","sales":13459380.68475342,"x":1723334400000,"y":13459380.68475342},{"region":"R1","week":"2024-08-18","sales":13491586.81383049,"x":1723939200000,"y":13491586.81383049},{"region":"R1","week":"2024-08-25","sales":12712906.06954605,"x":1724544000000,"y":12712906.06954605},{"region":"R1","week":"2024-09-01","sales":13635828.57390082,"x":1725148800000,"y":13635828.57390082},{"region":"R1","week":"2024-09-08","sales":12817996.0759514,"x":1725753600000,"y":12817996.0759514},{"region":"R1","week":"2024-09-15","sales":11821485.30795247,"x":1726358400000,"y":11821485.30795247},{"region":"R1","week":"2024-09-22","sales":12076360.27094906,"x":1726963200000,"y":12076360.27094906},{"region":"R1","week":"2024-09-29","sales":11680076.25299643,"x":1727568000000,"y":11680076.25299643},{"region":"R1","week":"2024-10-06","sales":11879267.86018179,"x":1728172800000,"y":11879267.86018179},{"region":"R1","week":"2024-10-13","sales":11708944.22674218,"x":1728777600000,"y":11708944.22674218},{"region":"R1","week":"2024-10-20","sales":11962143.98944513,"x":1729382400000,"y":11962143.98944513},{"region":"R1","week":"2024-10-27","sales":11780015.8150802,"x":1729987200000,"y":11780015.8150802},{"region":"R1","week":"2024-11-03","sales":12248027.22602149,"x":1730592000000,"y":12248027.22602149},{"region":"R1","week":"2024-11-10","sales":11477246.07536865,"x":1731196800000,"y":11477246.07536865},{"region":"R1","week":"2024-11-17","sales":11634769.19191102,"x":1731801600000,"y":11634769.19191102},{"region":"R1","week":"2024-11-24","sales":11942467.53196888,"x":1732406400000,"y":11942467.53196888},{"region":"R1","week":"2024-12-01","sales":11906115.15057554,"x":1733011200000,"y":11906115.15057554},{"region":"R1","week":"2024-12-08","sales":13377653.04354636,"x":1733616000000,"y":13377653.04354636},{"region":"R1","week":"2024-12-15","sales":13814476.6588773,"x":1734220800000,"y":13814476.6588773},{"region":"R1","week":"2024-12-22","sales":11985118.04841542,"x":1734825600000,"y":11985118.04841542},{"region":"R1","week":"2024-12-29","sales":10943198.50699738,"x":1735430400000,"y":10943198.50699738}],"type":"line"},{"name":"R2","data":[{"region":"R2","week":"2023-01-08","sales":10489561.58275915,"x":1673136000000,"y":10489561.58275915},{"region":"R2","week":"2023-01-15","sales":11280627.05515946,"x":1673740800000,"y":11280627.05515946},{"region":"R2","week":"2023-01-22","sales":11991326.33722619,"x":1674345600000,"y":11991326.33722619},{"region":"R2","week":"2023-01-29","sales":12077382.54062383,"x":1674950400000,"y":12077382.54062383},{"region":"R2","week":"2023-02-05","sales":11246619.82349489,"x":1675555200000,"y":11246619.82349489},{"region":"R2","week":"2023-02-12","sales":10717801.42039608,"x":1676160000000,"y":10717801.42039608},{"region":"R2","week":"2023-02-19","sales":10191072.76783987,"x":1676764800000,"y":10191072.76783987},{"region":"R2","week":"2023-02-26","sales":9572873.700326106,"x":1677369600000,"y":9572873.700326106},{"region":"R2","week":"2023-03-05","sales":9798978.514582492,"x":1677974400000,"y":9798978.514582492},{"region":"R2","week":"2023-03-12","sales":9557094.564530229,"x":1678579200000,"y":9557094.564530229},{"region":"R2","week":"2023-03-19","sales":8727762.954709414,"x":1679184000000,"y":8727762.954709414},{"region":"R2","week":"2023-03-26","sales":7830491.448157779,"x":1679788800000,"y":7830491.448157779},{"region":"R2","week":"2023-04-02","sales":7196291.29673903,"x":1680393600000,"y":7196291.29673903},{"region":"R2","week":"2023-04-09","sales":7560309.037075781,"x":1680998400000,"y":7560309.037075781},{"region":"R2","week":"2023-04-16","sales":8160528.61655245,"x":1681603200000,"y":8160528.61655245},{"region":"R2","week":"2023-04-23","sales":8250650.561616017,"x":1682208000000,"y":8250650.561616017},{"region":"R2","week":"2023-04-30","sales":8785192.470581906,"x":1682812800000,"y":8785192.470581906},{"region":"R2","week":"2023-05-07","sales":8510301.705366632,"x":1683417600000,"y":8510301.705366632},{"region":"R2","week":"2023-05-14","sales":8309686.26656134,"x":1684022400000,"y":8309686.26656134},{"region":"R2","week":"2023-05-21","sales":8357267.075507442,"x":1684627200000,"y":8357267.075507442},{"region":"R2","week":"2023-05-28","sales":8019990.686017388,"x":1685232000000,"y":8019990.686017388},{"region":"R2","week":"2023-06-04","sales":8103992.98475544,"x":1685836800000,"y":8103992.98475544},{"region":"R2","week":"2023-06-11","sales":7946930.565719207,"x":1686441600000,"y":7946930.565719207},{"region":"R2","week":"2023-06-18","sales":7407484.718691086,"x":1687046400000,"y":7407484.718691086},{"region":"R2","week":"2023-06-25","sales":7038209.362705666,"x":1687651200000,"y":7038209.362705666},{"region":"R2","week":"2023-07-02","sales":7595983.603522713,"x":1688256000000,"y":7595983.603522713},{"region":"R2","week":"2023-07-09","sales":6880733.923544493,"x":1688860800000,"y":6880733.923544493},{"region":"R2","week":"2023-07-16","sales":6554934.081762476,"x":1689465600000,"y":6554934.081762476},{"region":"R2","week":"2023-07-23","sales":6816972.186638859,"x":1690070400000,"y":6816972.186638859},{"region":"R2","week":"2023-07-30","sales":7769812.642833726,"x":1690675200000,"y":7769812.642833726},{"region":"R2","week":"2023-08-06","sales":7953450.119741023,"x":1691280000000,"y":7953450.119741023},{"region":"R2","week":"2023-08-13","sales":8363198.069883887,"x":1691884800000,"y":8363198.069883887},{"region":"R2","week":"2023-08-20","sales":8479149.927825706,"x":1692489600000,"y":8479149.927825706},{"region":"R2","week":"2023-08-27","sales":7417404.531282439,"x":1693094400000,"y":7417404.531282439},{"region":"R2","week":"2023-09-03","sales":8099739.40600474,"x":1693699200000,"y":8099739.40600474},{"region":"R2","week":"2023-09-10","sales":9144284.129433693,"x":1694304000000,"y":9144284.129433693},{"region":"R2","week":"2023-09-17","sales":9429407.401396409,"x":1694908800000,"y":9429407.401396409},{"region":"R2","week":"2023-09-24","sales":9470029.606607029,"x":1695513600000,"y":9470029.606607029},{"region":"R2","week":"2023-10-01","sales":9438111.812348798,"x":1696118400000,"y":9438111.812348798},{"region":"R2","week":"2023-10-08","sales":8621551.257915638,"x":1696723200000,"y":8621551.257915638},{"region":"R2","week":"2023-10-15","sales":8835112.198686348,"x":1697328000000,"y":8835112.198686348},{"region":"R2","week":"2023-10-22","sales":8227758.64490479,"x":1697932800000,"y":8227758.64490479},{"region":"R2","week":"2023-10-29","sales":8191772.983188413,"x":1698537600000,"y":8191772.983188413},{"region":"R2","week":"2023-11-05","sales":9382815.351744397,"x":1699142400000,"y":9382815.351744397},{"region":"R2","week":"2023-11-12","sales":8751712.532259494,"x":1699747200000,"y":8751712.532259494},{"region":"R2","week":"2023-11-19","sales":9527983.824609818,"x":1700352000000,"y":9527983.824609818},{"region":"R2","week":"2023-11-26","sales":9060788.37514009,"x":1700956800000,"y":9060788.37514009},{"region":"R2","week":"2023-12-03","sales":7872488.147795746,"x":1701561600000,"y":7872488.147795746},{"region":"R2","week":"2023-12-10","sales":7490688.880633915,"x":1702166400000,"y":7490688.880633915},{"region":"R2","week":"2023-12-17","sales":7029894.655535504,"x":1702771200000,"y":7029894.655535504},{"region":"R2","week":"2023-12-24","sales":6675034.107801186,"x":1703376000000,"y":6675034.107801186},{"region":"R2","week":"2023-12-31","sales":5821767.613849333,"x":1703980800000,"y":5821767.613849333},{"region":"R2","week":"2024-01-07","sales":6373407.932285289,"x":1704585600000,"y":6373407.932285289},{"region":"R2","week":"2024-01-14","sales":7798698.818310962,"x":1705190400000,"y":7798698.818310962},{"region":"R2","week":"2024-01-21","sales":7096536.69913168,"x":1705795200000,"y":7096536.69913168},{"region":"R2","week":"2024-01-28","sales":7443286.344354035,"x":1706400000000,"y":7443286.344354035},{"region":"R2","week":"2024-02-04","sales":8224664.754112659,"x":1707004800000,"y":8224664.754112659},{"region":"R2","week":"2024-02-11","sales":8640801.957370354,"x":1707609600000,"y":8640801.957370354},{"region":"R2","week":"2024-02-18","sales":8026556.226292754,"x":1708214400000,"y":8026556.226292754},{"region":"R2","week":"2024-02-25","sales":8027080.091186081,"x":1708819200000,"y":8027080.091186081},{"region":"R2","week":"2024-03-03","sales":8488173.644448075,"x":1709424000000,"y":8488173.644448075},{"region":"R2","week":"2024-03-10","sales":8953453.142255517,"x":1710028800000,"y":8953453.142255517},{"region":"R2","week":"2024-03-17","sales":8414301.426591478,"x":1710633600000,"y":8414301.426591478},{"region":"R2","week":"2024-03-24","sales":8639480.087153165,"x":1711238400000,"y":8639480.087153165},{"region":"R2","week":"2024-03-31","sales":8675602.079072513,"x":1711843200000,"y":8675602.079072513},{"region":"R2","week":"2024-04-07","sales":9028318.317150274,"x":1712448000000,"y":9028318.317150274},{"region":"R2","week":"2024-04-14","sales":8113523.836746155,"x":1713052800000,"y":8113523.836746155},{"region":"R2","week":"2024-04-21","sales":7815229.628102302,"x":1713657600000,"y":7815229.628102302},{"region":"R2","week":"2024-04-28","sales":9347786.263480816,"x":1714262400000,"y":9347786.263480816},{"region":"R2","week":"2024-05-05","sales":9228846.673813386,"x":1714867200000,"y":9228846.673813386},{"region":"R2","week":"2024-05-12","sales":9797317.507467339,"x":1715472000000,"y":9797317.507467339},{"region":"R2","week":"2024-05-19","sales":9948807.382819824,"x":1716076800000,"y":9948807.382819824},{"region":"R2","week":"2024-05-26","sales":9822474.820191808,"x":1716681600000,"y":9822474.820191808},{"region":"R2","week":"2024-06-02","sales":9629670.438474964,"x":1717286400000,"y":9629670.438474964},{"region":"R2","week":"2024-06-09","sales":9574150.80401703,"x":1717891200000,"y":9574150.80401703},{"region":"R2","week":"2024-06-16","sales":9560798.331876652,"x":1718496000000,"y":9560798.331876652},{"region":"R2","week":"2024-06-23","sales":9312977.305585777,"x":1719100800000,"y":9312977.305585777},{"region":"R2","week":"2024-06-30","sales":9140066.146602057,"x":1719705600000,"y":9140066.146602057},{"region":"R2","week":"2024-07-07","sales":10183719.95769722,"x":1720310400000,"y":10183719.95769722},{"region":"R2","week":"2024-07-14","sales":10279413.04756339,"x":1720915200000,"y":10279413.04756339},{"region":"R2","week":"2024-07-21","sales":9229760.583786059,"x":1721520000000,"y":9229760.583786059},{"region":"R2","week":"2024-07-28","sales":8920830.104276203,"x":1722124800000,"y":8920830.104276203},{"region":"R2","week":"2024-08-04","sales":9429175.542109929,"x":1722729600000,"y":9429175.542109929},{"region":"R2","week":"2024-08-11","sales":9686397.190901434,"x":1723334400000,"y":9686397.190901434},{"region":"R2","week":"2024-08-18","sales":9476673.546752824,"x":1723939200000,"y":9476673.546752824},{"region":"R2","week":"2024-08-25","sales":9109053.687719986,"x":1724544000000,"y":9109053.687719986},{"region":"R2","week":"2024-09-01","sales":9701254.539234256,"x":1725148800000,"y":9701254.539234256},{"region":"R2","week":"2024-09-08","sales":9714870.404680865,"x":1725753600000,"y":9714870.404680865},{"region":"R2","week":"2024-09-15","sales":9149252.049424881,"x":1726358400000,"y":9149252.049424881},{"region":"R2","week":"2024-09-22","sales":8742861.530227603,"x":1726963200000,"y":8742861.530227603},{"region":"R2","week":"2024-09-29","sales":7829893.510821731,"x":1727568000000,"y":7829893.510821731},{"region":"R2","week":"2024-10-06","sales":8376809.815773713,"x":1728172800000,"y":8376809.815773713},{"region":"R2","week":"2024-10-13","sales":9024357.042028369,"x":1728777600000,"y":9024357.042028369},{"region":"R2","week":"2024-10-20","sales":9729722.853215192,"x":1729382400000,"y":9729722.853215192},{"region":"R2","week":"2024-10-27","sales":9378485.154806765,"x":1729987200000,"y":9378485.154806765},{"region":"R2","week":"2024-11-03","sales":9788400.686829831,"x":1730592000000,"y":9788400.686829831},{"region":"R2","week":"2024-11-10","sales":9720706.560504846,"x":1731196800000,"y":9720706.560504846},{"region":"R2","week":"2024-11-17","sales":9519213.070067672,"x":1731801600000,"y":9519213.070067672},{"region":"R2","week":"2024-11-24","sales":9331468.78768421,"x":1732406400000,"y":9331468.78768421},{"region":"R2","week":"2024-12-01","sales":8480849.01883035,"x":1733011200000,"y":8480849.01883035},{"region":"R2","week":"2024-12-08","sales":8937525.435205685,"x":1733616000000,"y":8937525.435205685},{"region":"R2","week":"2024-12-15","sales":10014481.3515298,"x":1734220800000,"y":10014481.3515298},{"region":"R2","week":"2024-12-22","sales":9539437.211511506,"x":1734825600000,"y":9539437.211511506},{"region":"R2","week":"2024-12-29","sales":9296038.223557865,"x":1735430400000,"y":9296038.223557865}],"type":"line"},{"name":"R3","data":[{"region":"R3","week":"2023-01-08","sales":13439156.85525507,"x":1673136000000,"y":13439156.85525507},{"region":"R3","week":"2023-01-15","sales":14639210.75555542,"x":1673740800000,"y":14639210.75555542},{"region":"R3","week":"2023-01-22","sales":15935331.05683849,"x":1674345600000,"y":15935331.05683849},{"region":"R3","week":"2023-01-29","sales":15534581.26868229,"x":1674950400000,"y":15534581.26868229},{"region":"R3","week":"2023-02-05","sales":14192298.94238202,"x":1675555200000,"y":14192298.94238202},{"region":"R3","week":"2023-02-12","sales":13433895.23006278,"x":1676160000000,"y":13433895.23006278},{"region":"R3","week":"2023-02-19","sales":13707492.77467376,"x":1676764800000,"y":13707492.77467376},{"region":"R3","week":"2023-02-26","sales":13807163.53798802,"x":1677369600000,"y":13807163.53798802},{"region":"R3","week":"2023-03-05","sales":12647112.61567611,"x":1677974400000,"y":12647112.61567611},{"region":"R3","week":"2023-03-12","sales":11176006.61034517,"x":1678579200000,"y":11176006.61034517},{"region":"R3","week":"2023-03-19","sales":11825546.02243734,"x":1679184000000,"y":11825546.02243734},{"region":"R3","week":"2023-03-26","sales":12114742.86142997,"x":1679788800000,"y":12114742.86142997},{"region":"R3","week":"2023-04-02","sales":11172052.92986465,"x":1680393600000,"y":11172052.92986465},{"region":"R3","week":"2023-04-09","sales":10912759.29560697,"x":1680998400000,"y":10912759.29560697},{"region":"R3","week":"2023-04-16","sales":11738424.76660128,"x":1681603200000,"y":11738424.76660128},{"region":"R3","week":"2023-04-23","sales":10409265.36940255,"x":1682208000000,"y":10409265.36940255},{"region":"R3","week":"2023-04-30","sales":10923121.06703867,"x":1682812800000,"y":10923121.06703867},{"region":"R3","week":"2023-05-07","sales":10216059.12848698,"x":1683417600000,"y":10216059.12848698},{"region":"R3","week":"2023-05-14","sales":10226259.70610991,"x":1684022400000,"y":10226259.70610991},{"region":"R3","week":"2023-05-21","sales":10617120.09285251,"x":1684627200000,"y":10617120.09285251},{"region":"R3","week":"2023-05-28","sales":11255645.08358962,"x":1685232000000,"y":11255645.08358962},{"region":"R3","week":"2023-06-04","sales":11346954.36875337,"x":1685836800000,"y":11346954.36875337},{"region":"R3","week":"2023-06-11","sales":11129693.78837078,"x":1686441600000,"y":11129693.78837078},{"region":"R3","week":"2023-06-18","sales":10493585.96189253,"x":1687046400000,"y":10493585.96189253},{"region":"R3","week":"2023-06-25","sales":9471809.429377876,"x":1687651200000,"y":9471809.429377876},{"region":"R3","week":"2023-07-02","sales":10092669.78750851,"x":1688256000000,"y":10092669.78750851},{"region":"R3","week":"2023-07-09","sales":10127939.17671554,"x":1688860800000,"y":10127939.17671554},{"region":"R3","week":"2023-07-16","sales":10465213.68084355,"x":1689465600000,"y":10465213.68084355},{"region":"R3","week":"2023-07-23","sales":10310806.14895885,"x":1690070400000,"y":10310806.14895885},{"region":"R3","week":"2023-07-30","sales":11589618.14024537,"x":1690675200000,"y":11589618.14024537},{"region":"R3","week":"2023-08-06","sales":12050636.14814148,"x":1691280000000,"y":12050636.14814148},{"region":"R3","week":"2023-08-13","sales":11898257.13421237,"x":1691884800000,"y":11898257.13421237},{"region":"R3","week":"2023-08-20","sales":11086384.60393731,"x":1692489600000,"y":11086384.60393731},{"region":"R3","week":"2023-08-27","sales":10315202.73084113,"x":1693094400000,"y":10315202.73084113},{"region":"R3","week":"2023-09-03","sales":10355992.86927398,"x":1693699200000,"y":10355992.86927398},{"region":"R3","week":"2023-09-10","sales":11498751.78617427,"x":1694304000000,"y":11498751.78617427},{"region":"R3","week":"2023-09-17","sales":12656904.62209869,"x":1694908800000,"y":12656904.62209869},{"region":"R3","week":"2023-09-24","sales":12704211.22356772,"x":1695513600000,"y":12704211.22356772},{"region":"R3","week":"2023-10-01","sales":12294788.28301362,"x":1696118400000,"y":12294788.28301362},{"region":"R3","week":"2023-10-08","sales":10798704.04556349,"x":1696723200000,"y":10798704.04556349},{"region":"R3","week":"2023-10-15","sales":11293420.96127243,"x":1697328000000,"y":11293420.96127243},{"region":"R3","week":"2023-10-22","sales":10734302.3341593,"x":1697932800000,"y":10734302.3341593},{"region":"R3","week":"2023-10-29","sales":11576450.97078724,"x":1698537600000,"y":11576450.97078724},{"region":"R3","week":"2023-11-05","sales":12899379.44141752,"x":1699142400000,"y":12899379.44141752},{"region":"R3","week":"2023-11-12","sales":12164940.8553648,"x":1699747200000,"y":12164940.8553648},{"region":"R3","week":"2023-11-19","sales":12579626.12972892,"x":1700352000000,"y":12579626.12972892},{"region":"R3","week":"2023-11-26","sales":12645461.73692011,"x":1700956800000,"y":12645461.73692011},{"region":"R3","week":"2023-12-03","sales":11266991.22921325,"x":1701561600000,"y":11266991.22921325},{"region":"R3","week":"2023-12-10","sales":10633428.65794311,"x":1702166400000,"y":10633428.65794311},{"region":"R3","week":"2023-12-17","sales":9555132.719705578,"x":1702771200000,"y":9555132.719705578},{"region":"R3","week":"2023-12-24","sales":8951648.442773016,"x":1703376000000,"y":8951648.442773016},{"region":"R3","week":"2023-12-31","sales":8703525.905029334,"x":1703980800000,"y":8703525.905029334},{"region":"R3","week":"2024-01-07","sales":9717609.419819998,"x":1704585600000,"y":9717609.419819998},{"region":"R3","week":"2024-01-14","sales":10679127.15609788,"x":1705190400000,"y":10679127.15609788},{"region":"R3","week":"2024-01-21","sales":9697068.326761007,"x":1705795200000,"y":9697068.326761007},{"region":"R3","week":"2024-01-28","sales":9711805.340387207,"x":1706400000000,"y":9711805.340387207},{"region":"R3","week":"2024-02-04","sales":10618416.89002704,"x":1707004800000,"y":10618416.89002704},{"region":"R3","week":"2024-02-11","sales":11436509.82591555,"x":1707609600000,"y":11436509.82591555},{"region":"R3","week":"2024-02-18","sales":11139193.9199506,"x":1708214400000,"y":11139193.9199506},{"region":"R3","week":"2024-02-25","sales":11267636.65435329,"x":1708819200000,"y":11267636.65435329},{"region":"R3","week":"2024-03-03","sales":10924101.32228095,"x":1709424000000,"y":10924101.32228095},{"region":"R3","week":"2024-03-10","sales":10903411.28830153,"x":1710028800000,"y":10903411.28830153},{"region":"R3","week":"2024-03-17","sales":11231002.03740898,"x":1710633600000,"y":11231002.03740898},{"region":"R3","week":"2024-03-24","sales":12326975.56573169,"x":1711238400000,"y":12326975.56573169},{"region":"R3","week":"2024-03-31","sales":11635548.38007526,"x":1711843200000,"y":11635548.38007526},{"region":"R3","week":"2024-04-07","sales":12036417.01851451,"x":1712448000000,"y":12036417.01851451},{"region":"R3","week":"2024-04-14","sales":11317484.48558423,"x":1713052800000,"y":11317484.48558423},{"region":"R3","week":"2024-04-21","sales":9814652.270708185,"x":1713657600000,"y":9814652.270708185},{"region":"R3","week":"2024-04-28","sales":12050340.64738278,"x":1714262400000,"y":12050340.64738278},{"region":"R3","week":"2024-05-05","sales":12509302.85600271,"x":1714867200000,"y":12509302.85600271},{"region":"R3","week":"2024-05-12","sales":12733565.85233057,"x":1715472000000,"y":12733565.85233057},{"region":"R3","week":"2024-05-19","sales":13227140.42477415,"x":1716076800000,"y":13227140.42477415},{"region":"R3","week":"2024-05-26","sales":13235728.76935282,"x":1716681600000,"y":13235728.76935282},{"region":"R3","week":"2024-06-02","sales":13499777.88018807,"x":1717286400000,"y":13499777.88018807},{"region":"R3","week":"2024-06-09","sales":13343288.40498113,"x":1717891200000,"y":13343288.40498113},{"region":"R3","week":"2024-06-16","sales":12807760.80650244,"x":1718496000000,"y":12807760.80650244},{"region":"R3","week":"2024-06-23","sales":12727143.55296474,"x":1719100800000,"y":12727143.55296474},{"region":"R3","week":"2024-06-30","sales":12788883.1065496,"x":1719705600000,"y":12788883.1065496},{"region":"R3","week":"2024-07-07","sales":13710438.35543425,"x":1720310400000,"y":13710438.35543425},{"region":"R3","week":"2024-07-14","sales":13246824.21646723,"x":1720915200000,"y":13246824.21646723},{"region":"R3","week":"2024-07-21","sales":12903515.53885924,"x":1721520000000,"y":12903515.53885924},{"region":"R3","week":"2024-07-28","sales":12798139.36235944,"x":1722124800000,"y":12798139.36235944},{"region":"R3","week":"2024-08-04","sales":12549117.72995192,"x":1722729600000,"y":12549117.72995192},{"region":"R3","week":"2024-08-11","sales":12634001.77923358,"x":1723334400000,"y":12634001.77923358},{"region":"R3","week":"2024-08-18","sales":12857450.13182827,"x":1723939200000,"y":12857450.13182827},{"region":"R3","week":"2024-08-25","sales":12374704.26099058,"x":1724544000000,"y":12374704.26099058},{"region":"R3","week":"2024-09-01","sales":13320632.79692806,"x":1725148800000,"y":13320632.79692806},{"region":"R3","week":"2024-09-08","sales":13112933.96720368,"x":1725753600000,"y":13112933.96720368},{"region":"R3","week":"2024-09-15","sales":12291414.0018463,"x":1726358400000,"y":12291414.0018463},{"region":"R3","week":"2024-09-22","sales":11709830.80030557,"x":1726963200000,"y":11709830.80030557},{"region":"R3","week":"2024-09-29","sales":11641424.61579193,"x":1727568000000,"y":11641424.61579193},{"region":"R3","week":"2024-10-06","sales":12236109.39695871,"x":1728172800000,"y":12236109.39695871},{"region":"R3","week":"2024-10-13","sales":11833582.82259351,"x":1728777600000,"y":11833582.82259351},{"region":"R3","week":"2024-10-20","sales":12338712.40526752,"x":1729382400000,"y":12338712.40526752},{"region":"R3","week":"2024-10-27","sales":12980478.20538516,"x":1729987200000,"y":12980478.20538516},{"region":"R3","week":"2024-11-03","sales":13433250.17569796,"x":1730592000000,"y":13433250.17569796},{"region":"R3","week":"2024-11-10","sales":13358214.92512792,"x":1731196800000,"y":13358214.92512792},{"region":"R3","week":"2024-11-17","sales":13195172.53986938,"x":1731801600000,"y":13195172.53986938},{"region":"R3","week":"2024-11-24","sales":12063536.36229316,"x":1732406400000,"y":12063536.36229316},{"region":"R3","week":"2024-12-01","sales":10854665.22299591,"x":1733011200000,"y":10854665.22299591},{"region":"R3","week":"2024-12-08","sales":11879505.35602136,"x":1733616000000,"y":11879505.35602136},{"region":"R3","week":"2024-12-15","sales":12304486.84899354,"x":1734220800000,"y":12304486.84899354},{"region":"R3","week":"2024-12-22","sales":11918623.79810204,"x":1734825600000,"y":11918623.79810204},{"region":"R3","week":"2024-12-29","sales":11086837.64391647,"x":1735430400000,"y":11086837.64391647}],"type":"line"},{"name":"R4","data":[{"region":"R4","week":"2023-01-08","sales":6975419.262926603,"x":1673136000000,"y":6975419.262926603},{"region":"R4","week":"2023-01-15","sales":7322973.132250244,"x":1673740800000,"y":7322973.132250244},{"region":"R4","week":"2023-01-22","sales":7723970.028295485,"x":1674345600000,"y":7723970.028295485},{"region":"R4","week":"2023-01-29","sales":7557621.537890358,"x":1674950400000,"y":7557621.537890358},{"region":"R4","week":"2023-02-05","sales":7025063.461211064,"x":1675555200000,"y":7025063.461211064},{"region":"R4","week":"2023-02-12","sales":6513524.436740668,"x":1676160000000,"y":6513524.436740668},{"region":"R4","week":"2023-02-19","sales":6672829.036040663,"x":1676764800000,"y":6672829.036040663},{"region":"R4","week":"2023-02-26","sales":6439504.989771103,"x":1677369600000,"y":6439504.989771103},{"region":"R4","week":"2023-03-05","sales":6595814.696027741,"x":1677974400000,"y":6595814.696027741},{"region":"R4","week":"2023-03-12","sales":6125262.546497911,"x":1678579200000,"y":6125262.546497911},{"region":"R4","week":"2023-03-19","sales":5890670.642387993,"x":1679184000000,"y":5890670.642387993},{"region":"R4","week":"2023-03-26","sales":5808972.123929024,"x":1679788800000,"y":5808972.123929024},{"region":"R4","week":"2023-04-02","sales":5411197.691533948,"x":1680393600000,"y":5411197.691533948},{"region":"R4","week":"2023-04-09","sales":5173834.694053493,"x":1680998400000,"y":5173834.694053493},{"region":"R4","week":"2023-04-16","sales":5467236.347998504,"x":1681603200000,"y":5467236.347998504},{"region":"R4","week":"2023-04-23","sales":5611745.775923782,"x":1682208000000,"y":5611745.775923782},{"region":"R4","week":"2023-04-30","sales":5571676.23440356,"x":1682812800000,"y":5571676.23440356},{"region":"R4","week":"2023-05-07","sales":4898226.04414471,"x":1683417600000,"y":4898226.04414471},{"region":"R4","week":"2023-05-14","sales":4933642.079772655,"x":1684022400000,"y":4933642.079772655},{"region":"R4","week":"2023-05-21","sales":5235711.379606964,"x":1684627200000,"y":5235711.379606964},{"region":"R4","week":"2023-05-28","sales":5670753.295761737,"x":1685232000000,"y":5670753.295761737},{"region":"R4","week":"2023-06-04","sales":5971729.025613765,"x":1685836800000,"y":5971729.025613765},{"region":"R4","week":"2023-06-11","sales":5752289.025212752,"x":1686441600000,"y":5752289.025212752},{"region":"R4","week":"2023-06-18","sales":5126203.566831861,"x":1687046400000,"y":5126203.566831861},{"region":"R4","week":"2023-06-25","sales":4806131.917932053,"x":1687651200000,"y":4806131.917932053},{"region":"R4","week":"2023-07-02","sales":4909602.266991573,"x":1688256000000,"y":4909602.266991573},{"region":"R4","week":"2023-07-09","sales":4767612.774392011,"x":1688860800000,"y":4767612.774392011},{"region":"R4","week":"2023-07-16","sales":4479238.782632683,"x":1689465600000,"y":4479238.782632683},{"region":"R4","week":"2023-07-23","sales":4621588.662251351,"x":1690070400000,"y":4621588.662251351},{"region":"R4","week":"2023-07-30","sales":5227578.459527794,"x":1690675200000,"y":5227578.459527794},{"region":"R4","week":"2023-08-06","sales":5194328.612693331,"x":1691280000000,"y":5194328.612693331},{"region":"R4","week":"2023-08-13","sales":5480621.825651949,"x":1691884800000,"y":5480621.825651949},{"region":"R4","week":"2023-08-20","sales":5494117.756954207,"x":1692489600000,"y":5494117.756954207},{"region":"R4","week":"2023-08-27","sales":5334731.088215493,"x":1693094400000,"y":5334731.088215493},{"region":"R4","week":"2023-09-03","sales":5107677.767477833,"x":1693699200000,"y":5107677.767477833},{"region":"R4","week":"2023-09-10","sales":5137774.041131825,"x":1694304000000,"y":5137774.041131825},{"region":"R4","week":"2023-09-17","sales":5596630.576661189,"x":1694908800000,"y":5596630.576661189},{"region":"R4","week":"2023-09-24","sales":6074489.744572781,"x":1695513600000,"y":6074489.744572781},{"region":"R4","week":"2023-10-01","sales":5958096.482696881,"x":1696118400000,"y":5958096.482696881},{"region":"R4","week":"2023-10-08","sales":5380083.846313806,"x":1696723200000,"y":5380083.846313806},{"region":"R4","week":"2023-10-15","sales":5470661.369716137,"x":1697328000000,"y":5470661.369716137},{"region":"R4","week":"2023-10-22","sales":5068492.010339391,"x":1697932800000,"y":5068492.010339391},{"region":"R4","week":"2023-10-29","sales":5017350.275741066,"x":1698537600000,"y":5017350.275741066},{"region":"R4","week":"2023-11-05","sales":5972500.880863526,"x":1699142400000,"y":5972500.880863526},{"region":"R4","week":"2023-11-12","sales":6172340.849088442,"x":1699747200000,"y":6172340.849088442},{"region":"R4","week":"2023-11-19","sales":6497783.175912876,"x":1700352000000,"y":6497783.175912876},{"region":"R4","week":"2023-11-26","sales":6282186.335275494,"x":1700956800000,"y":6282186.335275494},{"region":"R4","week":"2023-12-03","sales":5589711.728484811,"x":1701561600000,"y":5589711.728484811},{"region":"R4","week":"2023-12-10","sales":4719699.975694153,"x":1702166400000,"y":4719699.975694153},{"region":"R4","week":"2023-12-17","sales":4352345.349524338,"x":1702771200000,"y":4352345.349524338},{"region":"R4","week":"2023-12-24","sales":4329632.49827217,"x":1703376000000,"y":4329632.49827217},{"region":"R4","week":"2023-12-31","sales":3916094.209957439,"x":1703980800000,"y":3916094.209957439},{"region":"R4","week":"2024-01-07","sales":4001905.914701267,"x":1704585600000,"y":4001905.914701267},{"region":"R4","week":"2024-01-14","sales":4836529.888753813,"x":1705190400000,"y":4836529.888753813},{"region":"R4","week":"2024-01-21","sales":4662206.6963097,"x":1705795200000,"y":4662206.6963097},{"region":"R4","week":"2024-01-28","sales":4960648.605267798,"x":1706400000000,"y":4960648.605267798},{"region":"R4","week":"2024-02-04","sales":5246417.838379011,"x":1707004800000,"y":5246417.838379011},{"region":"R4","week":"2024-02-11","sales":5826341.108693765,"x":1707609600000,"y":5826341.108693765},{"region":"R4","week":"2024-02-18","sales":5709710.393228016,"x":1708214400000,"y":5709710.393228016},{"region":"R4","week":"2024-02-25","sales":5735642.491363104,"x":1708819200000,"y":5735642.491363104},{"region":"R4","week":"2024-03-03","sales":5188534.00603174,"x":1709424000000,"y":5188534.00603174},{"region":"R4","week":"2024-03-10","sales":5211748.855551302,"x":1710028800000,"y":5211748.855551302},{"region":"R4","week":"2024-03-17","sales":5251896.490021944,"x":1710633600000,"y":5251896.490021944},{"region":"R4","week":"2024-03-24","sales":5496448.99901967,"x":1711238400000,"y":5496448.99901967},{"region":"R4","week":"2024-03-31","sales":5879613.85528591,"x":1711843200000,"y":5879613.85528591},{"region":"R4","week":"2024-04-07","sales":6076170.052705183,"x":1712448000000,"y":6076170.052705183},{"region":"R4","week":"2024-04-14","sales":5833373.796844982,"x":1713052800000,"y":5833373.796844982},{"region":"R4","week":"2024-04-21","sales":5618816.309183919,"x":1713657600000,"y":5618816.309183919},{"region":"R4","week":"2024-04-28","sales":6620670.64949549,"x":1714262400000,"y":6620670.64949549},{"region":"R4","week":"2024-05-05","sales":6428695.110691326,"x":1714867200000,"y":6428695.110691326},{"region":"R4","week":"2024-05-12","sales":6575789.14818459,"x":1715472000000,"y":6575789.14818459},{"region":"R4","week":"2024-05-19","sales":6790816.173253783,"x":1716076800000,"y":6790816.173253783},{"region":"R4","week":"2024-05-26","sales":6310918.02224933,"x":1716681600000,"y":6310918.02224933},{"region":"R4","week":"2024-06-02","sales":6126492.422114869,"x":1717286400000,"y":6126492.422114869},{"region":"R4","week":"2024-06-09","sales":6672698.246879151,"x":1717891200000,"y":6672698.246879151},{"region":"R4","week":"2024-06-16","sales":6611708.522244769,"x":1718496000000,"y":6611708.522244769},{"region":"R4","week":"2024-06-23","sales":6127938.716311146,"x":1719100800000,"y":6127938.716311146},{"region":"R4","week":"2024-06-30","sales":6222219.828649824,"x":1719705600000,"y":6222219.828649824},{"region":"R4","week":"2024-07-07","sales":7049003.024574626,"x":1720310400000,"y":7049003.024574626},{"region":"R4","week":"2024-07-14","sales":6669293.683396075,"x":1720915200000,"y":6669293.683396075},{"region":"R4","week":"2024-07-21","sales":5853318.494679679,"x":1721520000000,"y":5853318.494679679},{"region":"R4","week":"2024-07-28","sales":5866135.270597057,"x":1722124800000,"y":5866135.270597057},{"region":"R4","week":"2024-08-04","sales":6348579.859218894,"x":1722729600000,"y":6348579.859218894},{"region":"R4","week":"2024-08-11","sales":6673989.317875319,"x":1723334400000,"y":6673989.317875319},{"region":"R4","week":"2024-08-18","sales":6374093.284550702,"x":1723939200000,"y":6374093.284550702},{"region":"R4","week":"2024-08-25","sales":5761820.205956114,"x":1724544000000,"y":5761820.205956114},{"region":"R4","week":"2024-09-01","sales":6135025.254745854,"x":1725148800000,"y":6135025.254745854},{"region":"R4","week":"2024-09-08","sales":6192027.228212153,"x":1725753600000,"y":6192027.228212153},{"region":"R4","week":"2024-09-15","sales":6068993.247701143,"x":1726358400000,"y":6068993.247701143},{"region":"R4","week":"2024-09-22","sales":5865020.639040371,"x":1726963200000,"y":5865020.639040371},{"region":"R4","week":"2024-09-29","sales":5934852.560925982,"x":1727568000000,"y":5934852.560925982},{"region":"R4","week":"2024-10-06","sales":6170858.328985054,"x":1728172800000,"y":6170858.328985054},{"region":"R4","week":"2024-10-13","sales":6073208.307830692,"x":1728777600000,"y":6073208.307830692},{"region":"R4","week":"2024-10-20","sales":6435278.615025006,"x":1729382400000,"y":6435278.615025006},{"region":"R4","week":"2024-10-27","sales":6505528.645591896,"x":1729987200000,"y":6505528.645591896},{"region":"R4","week":"2024-11-03","sales":6098082.71696736,"x":1730592000000,"y":6098082.71696736},{"region":"R4","week":"2024-11-10","sales":5920580.924401032,"x":1731196800000,"y":5920580.924401032},{"region":"R4","week":"2024-11-17","sales":6125623.956029619,"x":1731801600000,"y":6125623.956029619},{"region":"R4","week":"2024-11-24","sales":5650219.857583179,"x":1732406400000,"y":5650219.857583179},{"region":"R4","week":"2024-12-01","sales":5258361.379024798,"x":1733011200000,"y":5258361.379024798},{"region":"R4","week":"2024-12-08","sales":5810859.176839576,"x":1733616000000,"y":5810859.176839576},{"region":"R4","week":"2024-12-15","sales":6293143.513864556,"x":1734220800000,"y":6293143.513864556},{"region":"R4","week":"2024-12-22","sales":6094879.614633263,"x":1734825600000,"y":6094879.614633263},{"region":"R4","week":"2024-12-29","sales":5941396.683291331,"x":1735430400000,"y":5941396.683291331}],"type":"line"},{"name":"R5","data":[{"region":"R5","week":"2023-01-08","sales":12919421.44328378,"x":1673136000000,"y":12919421.44328378},{"region":"R5","week":"2023-01-15","sales":13559964.53524944,"x":1673740800000,"y":13559964.53524944},{"region":"R5","week":"2023-01-22","sales":14403880.11603349,"x":1674345600000,"y":14403880.11603349},{"region":"R5","week":"2023-01-29","sales":13974018.81785524,"x":1674950400000,"y":13974018.81785524},{"region":"R5","week":"2023-02-05","sales":13078690.17741398,"x":1675555200000,"y":13078690.17741398},{"region":"R5","week":"2023-02-12","sales":11791483.82369237,"x":1676160000000,"y":11791483.82369237},{"region":"R5","week":"2023-02-19","sales":11389806.88126212,"x":1676764800000,"y":11389806.88126212},{"region":"R5","week":"2023-02-26","sales":11024210.33168933,"x":1677369600000,"y":11024210.33168933},{"region":"R5","week":"2023-03-05","sales":10750169.96061974,"x":1677974400000,"y":10750169.96061974},{"region":"R5","week":"2023-03-12","sales":10237242.33660384,"x":1678579200000,"y":10237242.33660384},{"region":"R5","week":"2023-03-19","sales":10562088.06648733,"x":1679184000000,"y":10562088.06648733},{"region":"R5","week":"2023-03-26","sales":10729899.5244038,"x":1679788800000,"y":10729899.5244038},{"region":"R5","week":"2023-04-02","sales":9597089.812031792,"x":1680393600000,"y":9597089.812031792},{"region":"R5","week":"2023-04-09","sales":8912101.37308746,"x":1680998400000,"y":8912101.37308746},{"region":"R5","week":"2023-04-16","sales":9281947.768431947,"x":1681603200000,"y":9281947.768431947},{"region":"R5","week":"2023-04-23","sales":9243357.128059128,"x":1682208000000,"y":9243357.128059128},{"region":"R5","week":"2023-04-30","sales":9831162.231077913,"x":1682812800000,"y":9831162.231077913},{"region":"R5","week":"2023-05-07","sales":9486442.278487012,"x":1683417600000,"y":9486442.278487012},{"region":"R5","week":"2023-05-14","sales":9489129.63606808,"x":1684022400000,"y":9489129.63606808},{"region":"R5","week":"2023-05-21","sales":9161412.547107849,"x":1684627200000,"y":9161412.547107849},{"region":"R5","week":"2023-05-28","sales":9476711.177814288,"x":1685232000000,"y":9476711.177814288},{"region":"R5","week":"2023-06-04","sales":10328985.281828,"x":1685836800000,"y":10328985.281828},{"region":"R5","week":"2023-06-11","sales":10657145.46090403,"x":1686441600000,"y":10657145.46090403},{"region":"R5","week":"2023-06-18","sales":9867315.559501324,"x":1687046400000,"y":9867315.559501324},{"region":"R5","week":"2023-06-25","sales":8627498.462566972,"x":1687651200000,"y":8627498.462566972},{"region":"R5","week":"2023-07-02","sales":9609484.213196751,"x":1688256000000,"y":9609484.213196751},{"region":"R5","week":"2023-07-09","sales":9426894.764569463,"x":1688860800000,"y":9426894.764569463},{"region":"R5","week":"2023-07-16","sales":8935763.921627307,"x":1689465600000,"y":8935763.921627307},{"region":"R5","week":"2023-07-23","sales":8925502.848911803,"x":1690070400000,"y":8925502.848911803},{"region":"R5","week":"2023-07-30","sales":9585893.977593161,"x":1690675200000,"y":9585893.977593161},{"region":"R5","week":"2023-08-06","sales":9207009.911960153,"x":1691280000000,"y":9207009.911960153},{"region":"R5","week":"2023-08-13","sales":9066202.935403246,"x":1691884800000,"y":9066202.935403246},{"region":"R5","week":"2023-08-20","sales":9202031.540763395,"x":1692489600000,"y":9202031.540763395},{"region":"R5","week":"2023-08-27","sales":9157021.695259422,"x":1693094400000,"y":9157021.695259422},{"region":"R5","week":"2023-09-03","sales":9016522.977280129,"x":1693699200000,"y":9016522.977280129},{"region":"R5","week":"2023-09-10","sales":10253633.54559241,"x":1694304000000,"y":10253633.54559241},{"region":"R5","week":"2023-09-17","sales":11107324.04343041,"x":1694908800000,"y":11107324.04343041},{"region":"R5","week":"2023-09-24","sales":10907810.62418506,"x":1695513600000,"y":10907810.62418506},{"region":"R5","week":"2023-10-01","sales":10685104.52897949,"x":1696118400000,"y":10685104.52897949},{"region":"R5","week":"2023-10-08","sales":9865294.126961945,"x":1696723200000,"y":9865294.126961945},{"region":"R5","week":"2023-10-15","sales":10783501.75572235,"x":1697328000000,"y":10783501.75572235},{"region":"R5","week":"2023-10-22","sales":9992391.374222241,"x":1697932800000,"y":9992391.374222241},{"region":"R5","week":"2023-10-29","sales":10116004.94391102,"x":1698537600000,"y":10116004.94391102},{"region":"R5","week":"2023-11-05","sales":11262212.33292143,"x":1699142400000,"y":11262212.33292143},{"region":"R5","week":"2023-11-12","sales":11177190.85042785,"x":1699747200000,"y":11177190.85042785},{"region":"R5","week":"2023-11-19","sales":11798859.25852125,"x":1700352000000,"y":11798859.25852125},{"region":"R5","week":"2023-11-26","sales":11737338.44294207,"x":1700956800000,"y":11737338.44294207},{"region":"R5","week":"2023-12-03","sales":10417188.166658,"x":1701561600000,"y":10417188.166658},{"region":"R5","week":"2023-12-10","sales":9360232.162769238,"x":1702166400000,"y":9360232.162769238},{"region":"R5","week":"2023-12-17","sales":8601617.938047014,"x":1702771200000,"y":8601617.938047014},{"region":"R5","week":"2023-12-24","sales":7914136.699439824,"x":1703376000000,"y":7914136.699439824},{"region":"R5","week":"2023-12-31","sales":6656184.878205351,"x":1703980800000,"y":6656184.878205351},{"region":"R5","week":"2024-01-07","sales":7531775.021502108,"x":1704585600000,"y":7531775.021502108},{"region":"R5","week":"2024-01-14","sales":8897934.976549853,"x":1705190400000,"y":8897934.976549853},{"region":"R5","week":"2024-01-21","sales":8633599.229050566,"x":1705795200000,"y":8633599.229050566},{"region":"R5","week":"2024-01-28","sales":9500092.459223727,"x":1706400000000,"y":9500092.459223727},{"region":"R5","week":"2024-02-04","sales":10492218.80513287,"x":1707004800000,"y":10492218.80513287},{"region":"R5","week":"2024-02-11","sales":10900658.76524112,"x":1707609600000,"y":10900658.76524112},{"region":"R5","week":"2024-02-18","sales":10119071.41305156,"x":1708214400000,"y":10119071.41305156},{"region":"R5","week":"2024-02-25","sales":10304888.85763865,"x":1708819200000,"y":10304888.85763865},{"region":"R5","week":"2024-03-03","sales":10839015.5634317,"x":1709424000000,"y":10839015.5634317},{"region":"R5","week":"2024-03-10","sales":11388719.17584368,"x":1710028800000,"y":11388719.17584368},{"region":"R5","week":"2024-03-17","sales":10333108.13386445,"x":1710633600000,"y":10333108.13386445},{"region":"R5","week":"2024-03-24","sales":10970945.47946585,"x":1711238400000,"y":10970945.47946585},{"region":"R5","week":"2024-03-31","sales":11038169.84855249,"x":1711843200000,"y":11038169.84855249},{"region":"R5","week":"2024-04-07","sales":11649375.41659314,"x":1712448000000,"y":11649375.41659314},{"region":"R5","week":"2024-04-14","sales":11251112.10111775,"x":1713052800000,"y":11251112.10111775},{"region":"R5","week":"2024-04-21","sales":10334802.08544603,"x":1713657600000,"y":10334802.08544603},{"region":"R5","week":"2024-04-28","sales":11946616.53192401,"x":1714262400000,"y":11946616.53192401},{"region":"R5","week":"2024-05-05","sales":12245531.77783229,"x":1714867200000,"y":12245531.77783229},{"region":"R5","week":"2024-05-12","sales":12456837.62545394,"x":1715472000000,"y":12456837.62545394},{"region":"R5","week":"2024-05-19","sales":12893929.24101963,"x":1716076800000,"y":12893929.24101963},{"region":"R5","week":"2024-05-26","sales":13194045.7767125,"x":1716681600000,"y":13194045.7767125},{"region":"R5","week":"2024-06-02","sales":13258281.83890045,"x":1717286400000,"y":13258281.83890045},{"region":"R5","week":"2024-06-09","sales":12949033.69426202,"x":1717891200000,"y":12949033.69426202},{"region":"R5","week":"2024-06-16","sales":11739159.73516697,"x":1718496000000,"y":11739159.73516697},{"region":"R5","week":"2024-06-23","sales":12342542.6569415,"x":1719100800000,"y":12342542.6569415},{"region":"R5","week":"2024-06-30","sales":12320045.24294301,"x":1719705600000,"y":12320045.24294301},{"region":"R5","week":"2024-07-07","sales":13879489.37676696,"x":1720310400000,"y":13879489.37676696},{"region":"R5","week":"2024-07-14","sales":13557456.33965899,"x":1720915200000,"y":13557456.33965899},{"region":"R5","week":"2024-07-21","sales":12729933.37316234,"x":1721520000000,"y":12729933.37316234},{"region":"R5","week":"2024-07-28","sales":12244526.5378774,"x":1722124800000,"y":12244526.5378774},{"region":"R5","week":"2024-08-04","sales":12142061.38433933,"x":1722729600000,"y":12142061.38433933},{"region":"R5","week":"2024-08-11","sales":12261170.51412217,"x":1723334400000,"y":12261170.51412217},{"region":"R5","week":"2024-08-18","sales":11749840.07059664,"x":1723939200000,"y":11749840.07059664},{"region":"R5","week":"2024-08-25","sales":10869085.42618292,"x":1724544000000,"y":10869085.42618292},{"region":"R5","week":"2024-09-01","sales":11819438.20143181,"x":1725148800000,"y":11819438.20143181},{"region":"R5","week":"2024-09-08","sales":11658740.30093954,"x":1725753600000,"y":11658740.30093954},{"region":"R5","week":"2024-09-15","sales":10286085.79418084,"x":1726358400000,"y":10286085.79418084},{"region":"R5","week":"2024-09-22","sales":9931179.651874907,"x":1726963200000,"y":9931179.651874907},{"region":"R5","week":"2024-09-29","sales":10297145.08577595,"x":1727568000000,"y":10297145.08577595},{"region":"R5","week":"2024-10-06","sales":11380130.41334032,"x":1728172800000,"y":11380130.41334032},{"region":"R5","week":"2024-10-13","sales":11757870.62089472,"x":1728777600000,"y":11757870.62089472},{"region":"R5","week":"2024-10-20","sales":11418142.21389298,"x":1729382400000,"y":11418142.21389298},{"region":"R5","week":"2024-10-27","sales":11137159.40506357,"x":1729987200000,"y":11137159.40506357},{"region":"R5","week":"2024-11-03","sales":11716918.92476379,"x":1730592000000,"y":11716918.92476379},{"region":"R5","week":"2024-11-10","sales":12023587.17107937,"x":1731196800000,"y":12023587.17107937},{"region":"R5","week":"2024-11-17","sales":11838158.37818203,"x":1731801600000,"y":11838158.37818203},{"region":"R5","week":"2024-11-24","sales":10934087.88619423,"x":1732406400000,"y":10934087.88619423},{"region":"R5","week":"2024-12-01","sales":10480934.49842277,"x":1733011200000,"y":10480934.49842277},{"region":"R5","week":"2024-12-08","sales":10996676.12563808,"x":1733616000000,"y":10996676.12563808},{"region":"R5","week":"2024-12-15","sales":11175322.12786421,"x":1734220800000,"y":11175322.12786421},{"region":"R5","week":"2024-12-22","sales":10790624.33102284,"x":1734825600000,"y":10790624.33102284},{"region":"R5","week":"2024-12-29","sales":9926632.572100341,"x":1735430400000,"y":9926632.572100341}],"type":"line"}],"xAxis":{"type":"datetime","title":{"text":"Week-Ending-Sunday"}},"tooltip":{"valueDecimals":0,"valuePrefix":"$","pointFormat":"<b>{series.name}<\/b>: ${point.y:,.0f}<br/>"}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":",","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="creating-the-data-generating-process-for-marketing-effectiveness" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-data-generating-process-for-marketing-effectiveness">Creating the Data Generating Process for Marketing Effectiveness</h2>
+<p>To evaluate whether our model can recover the true impact of each media tactic, we explicitly design the data generating process (DGP). In this step, we assign artificial yet controlled coefficients to each marketing tactic, effectively simulating how much each contributes to driving sales. By creating the ground truth, we ensure that any model we estimate later can be judged by how well it captures these pre-defined relationships. This design allows us to rigorously test the model’s validity, interpretability, and robustness in recovering known effects under realistic noise and variability.</p>
+</section>
+<section id="generating-media-execution" class="level2">
+<h2 class="anchored" data-anchor-id="generating-media-execution">Generating Media Execution</h2>
+<p>This section focuses on generating artificial media spend data across the same state-week structure used in the sales dataset. We simulate six marketing tactics: META, Instagram, TikTok, Influencers, Out-of-Home (OOH), and Public Relations (PR). Each tactic has a dynamic pattern of spend that varies across states and weeks, reflecting both planned marketing strategy and random fluctuations. The resulting dataset contains one row per state-week-tactic combination, with variables for spend and potentially support, and can be reshaped into a wide format for modeling. This synthetic media input data feeds directly into the simulation of sales performance and is critical for estimation.</p>
+</section>
+<section id="estimations" class="level2">
+<h2 class="anchored" data-anchor-id="estimations">Estimations</h2>
+<p>In the final section, we bring all the pieces together to estimate the contribution of each media channel to sales. Using a linear modeling approach compatible with tidyverse workflows, we regress the simulated sales data on media spend variables, ideally recovering the original coefficients from the DGP. The modeling process uses tidy principles for data preparation, model fitting, and result interpretation, relying on functions such as lm(), broom::tidy(), and ggplot2 for visualization. This section is the analytical heart of the project, where we assess how well our tidy-MMM framework performs in estimating media effectiveness under controlled conditions.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

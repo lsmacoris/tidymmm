@@ -1,0 +1,138 @@
+---
+title: "Tidy MMM"
+author: "Lucas S. Macoris"
+format: 
+  html:
+    page-layout: full
+editor: visual
+---
+
+## Loading Libraries
+
+In this section, we will be loading all the `R` packages required to build and run the `tidy-mmm` workflow. The project is built mainly using the `tidyverse`, a collection of R packages designed for data science, which provides a consistent and expressive framework for data manipulation, visualization, and modeling. Additional libraries such as `lubridate` are used for handling dates, and other optional packages may be included to support regression modeling and visualization formatting, like `broom` and `tidymodels`. This step ensures the environment is fully prepared before any data is generated or analyzed.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(tidymodels)
+library(lubridate)
+library(xts)
+library(glue)
+library(scales)
+library(highcharter)
+
+```
+
+## Generating Sales Data
+
+In this section, we create a synthetic dataset that simulates weekly sales at the state level for all 50 U.S. states across 104 weeks (roughly 2 years worth of data). The generated sales data is anchored in a common underlying national trend, which reflects a baseline seasonal or growth pattern, a regional shock, and a state shock to reflect realistic geographic disparities in sales performance. The result is a tidy dataset containing state, week, and sales columns, which forms the dependent variable for our media mix modeling.
+
+To simulate dynamic sales behavior, the model incorporates the three levels of variation using an $ARIMA(p,d,q)$ processe: a `national_shock` that affects all states, a `regional_shock` that varies by region, and idiosyncratic `state_shock` that are unique to each state. The national shock is modeled using a non-stationary $ARIMA(0.9,1,0.2)$ process to capture long-term trends and broader economic conditions. Regional and state-specific shocks follow stationary ARIMA models to introduce localized fluctuations.
+
+These shocks are combined using a weighted approach, where the national component has the highest influence, followed by the regional and state-level contributions. The weights are set to reflect the relative importance of each level: $5$ for national, $3$ for regional, and $1$ for state-specific shocks.
+
+Crucially, the resulting signal is scaled and centered around a realistic sales baseline. A fixed baseline of $1MM$ units is used to represent typical sales volume, and a scaling factor of $10,000$ adjusts the amplitude of the combined shock components. The final synthetic sales value for each week and state is computed by adding the weighted, scaled sum of shocks to this baseline, ensuring that the series resembles plausible real-world sales trajectories while maintaining structured variation across states and over time.
+
+The final result is a structured list containing $50$ time series data frames—one for each state—with columns for national, regional, and state shocks, as well as the computed synthetic sales values. This setup is ideal for testing econometric models, running marketing experiments, or demonstrating media mix modeling pipelines.
+
+```{r}
+#| warning: false
+#| message: false
+
+#Set seed for reproducibility
+set.seed(123)
+
+#Set a Sales scaling factor
+baseline = 1000000
+scaling = 10000
+
+#Create a panel dataframe that assigns 50 states to 5 regions
+states = glue('S{1:50}')%>%as.vector()
+regions = glue('R{1:5}')%>%as.vector()
+panel=data.frame('region'= sample(regions,50,replace=TRUE),
+                 'state'= states)%>%arrange(region)
+
+#Create a Week Ending Sunday series
+start_date = as.Date('2023-01-01')
+end_date = as.Date('2024-12-28')
+weeks = seq.Date(start_date,end_date,'1 week')%>%ceiling_date(unit='weeks')
+
+#Create a National baseline series that spans all states based on an ARIMA(p,d,q) model
+national_shock = arima.sim(model=list(ar=0.9,ma=0.2,i=1),n=length(weeks))
+
+#Create region-wise shocks that affect only states within a given state
+regional_shock = replicate(length(regions),arima.sim(model=list(ar=0.5,ma=0.5,i=0),n=length(weeks)))
+colnames(regional_shock) = regions
+
+#Create state-specific shocks to allow for within-state variation
+state_shock = replicate(length(states),arima.sim(model=list(ar=0.7,ma=0.25,i=0),n=length(weeks)))
+colnames(state_shock) = states
+
+#Apply weightings to national, region, and state dependency (weights are relative)
+n_share = 5
+r_share = 3
+s_share = 1
+
+#Initialize a state-level list and build the national, regional, and state-level variations
+panel_data=vector("list",50)%>%
+  setNames(states)%>%
+  imap(function(.x, state_name) {
+    
+    #Get the state name
+    region_name = panel %>%
+      filter(state == state_name) %>%
+      pull(region)
+    
+      data.frame(
+        national_shock=as.numeric(national_shock),
+        regional_shock=pull(as.data.frame(regional_shock)%>%select(region_name)),
+        state_shock= pull(as.data.frame(state_shock)%>%select(state_name))
+        )%>%
+      mutate(sales = baseline + scaling * (national_shock * n_share + regional_shock * r_share + state_shock * s_share))
+      }
+  )
+
+regional_sales = (
+  
+  do.call('cbind',panel_data %>%map(\(x) x%>%select(sales)))%>%
+    setNames(states)%>%
+    mutate(week=weeks)%>%
+    pivot_longer(names_to = 'state',values_to = 'sales',cols = starts_with('S'))%>%
+    left_join(panel)%>%
+    group_by(region,week)%>%
+    summarize(across(where(is.numeric),sum,na.rm=TRUE))
+  )
+
+#Chart Options
+hcoptslang <- getOption("highcharter.lang")
+hcoptslang$thousandsSep <- ","
+options(highcharter.lang = hcoptslang)
+
+regional_sales%>%
+  hchart("line",hcaes(x = week, y = sales, group = region))%>%
+  hc_title(text = "Sales over time by Region")%>%
+  hc_xAxis(title=list(text='Week-Ending-Sunday'))%>%
+  hc_yAxis(title=list(text='Unit Sales'))%>%
+  hc_tooltip(
+  valueDecimals = 0,
+  valuePrefix = "$",
+  pointFormat = "<b>{series.name}</b>: ${point.y:,.0f}<br/>"
+)
+
+```
+
+
+
+## Creating the Data Generating Process for Marketing Effectiveness
+
+To evaluate whether our model can recover the true impact of each media tactic, we explicitly design the data generating process (DGP). In this step, we assign artificial yet controlled coefficients to each marketing tactic, effectively simulating how much each contributes to driving sales. By creating the ground truth, we ensure that any model we estimate later can be judged by how well it captures these pre-defined relationships. This design allows us to rigorously test the model's validity, interpretability, and robustness in recovering known effects under realistic noise and variability.
+
+## Generating Media Execution
+
+This section focuses on generating artificial media spend data across the same state-week structure used in the sales dataset. We simulate six marketing tactics: META, Instagram, TikTok, Influencers, Out-of-Home (OOH), and Public Relations (PR). Each tactic has a dynamic pattern of spend that varies across states and weeks, reflecting both planned marketing strategy and random fluctuations. The resulting dataset contains one row per state-week-tactic combination, with variables for spend and potentially support, and can be reshaped into a wide format for modeling. This synthetic media input data feeds directly into the simulation of sales performance and is critical for estimation.
+
+## Estimations
+
+In the final section, we bring all the pieces together to estimate the contribution of each media channel to sales. Using a linear modeling approach compatible with tidyverse workflows, we regress the simulated sales data on media spend variables, ideally recovering the original coefficients from the DGP. The modeling process uses tidy principles for data preparation, model fitting, and result interpretation, relying on functions such as lm(), broom::tidy(), and ggplot2 for visualization. This section is the analytical heart of the project, where we assess how well our tidy-MMM framework performs in estimating media effectiveness under controlled conditions.
